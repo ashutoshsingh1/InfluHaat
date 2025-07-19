@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Contact {{ influencer.name }} - InfluHaat{% endblock %}
+
+{% block content %}
+<div class="container" style="margin-top: 100px; margin-bottom: 100px;">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="fas fa-envelope me-2"></i>Contact {{ influencer.name }}
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h6>Influencer Details:</h6>
+                            <ul class="list-unstyled">
+                                <li><strong>Name:</strong> {{ influencer.name }}</li>
+                                <li><strong>Category:</strong> {{ influencer.categories|title }}</li>
+                                <li><strong>Location:</strong> {{ influencer.location }}</li>
+                                <li><strong>Followers:</strong> {{ "{:,}".format(influencer.followers_count) }}</li>
+                                <li><strong>Rate per Post:</strong> ₹{{ influencer.rate_per_post }}</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            {% if influencer.bio %}
+                                <h6>Bio:</h6>
+                                <p class="text-muted">{{ influencer.bio }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <form method="POST">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="mb-3">
+                            {{ form.message.label(class="form-label") }}
+                            {{ form.message(class="form-control", rows="5", placeholder="Describe your campaign, goals, and what you're looking for...") }}
+                            {% if form.message.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.message.errors %}{{ error }}{% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form.budget.label(class="form-label") }}
+                                {{ form.budget(class="form-control", placeholder="e.g., 500") }}
+                                <div class="form-text">Your budget for this campaign</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form.campaign_type.label(class="form-label") }}
+                                {{ form.campaign_type(class="form-select") }}
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            {{ form.submit(class="btn btn-primary btn-lg") }}
+                            <a href="{{ url_for('influencer_profile', id=influencer.id) }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Back to Profile
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

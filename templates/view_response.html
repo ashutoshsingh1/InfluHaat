@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block title %}View Response - InfluHaat{% endblock %}
+
+{% block content %}
+<div class="container" style="margin-top: 100px; margin-bottom: 100px;">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0">
+                            <i class="fas fa-comments me-2"></i>Contact Details & Response
+                        </h4>
+                        <a href="{% if current_user.user_type == 'business' %}{{ url_for('business_dashboard') }}{% else %}{{ url_for('influencer_dashboard') }}{% endif %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Original Contact Details -->
+                    <div class="alert alert-info">
+                        <h6><strong>Original Contact</strong></h6>
+                        <div class="row">
+                            {% if current_user.user_type == 'business' %}
+                                <div class="col-md-6">
+                                    <p><strong>To:</strong> {{ contact.influencer.name }}</p>
+                                    <p><strong>Category:</strong> {{ contact.influencer.categories|title }}</p>
+                                    <p><strong>Location:</strong> {{ contact.influencer.location }}</p>
+                                </div>
+                            {% else %}
+                                <div class="col-md-6">
+                                    <p><strong>From:</strong> {{ contact.business.company_name }}</p>
+                                    <p><strong>Contact Person:</strong> {{ contact.business.contact_person }}</p>
+                                    <p><strong>Industry:</strong> {{ contact.business.business_type|title }}</p>
+                                </div>
+                            {% endif %}
+                            <div class="col-md-6">
+                                <p><strong>Campaign Type:</strong> {{ contact.campaign_type|replace('_', ' ')|title }}</p>
+                                {% if contact.budget %}
+                                    <p><strong>Budget:</strong> ₹{{ contact.budget }}</p>
+                                {% endif %}
+                                <p><strong>Date:</strong> {{ contact.created_at.strftime('%b %d, %Y at %I:%M %p') }}</p>
+                            </div>
+                        </div>
+                        <hr>
+                        <p><strong>Message:</strong></p>
+                        <p class="mb-0">{{ contact.message }}</p>
+                    </div>
+
+                    <!-- Response Section -->
+                    {% if contact.responses %}
+                        <h5 class="mt-4 mb-3">Response History</h5>
+                        {% for response in contact.responses %}
+                            <div class="alert alert-{% if response.status == 'accepted' %}success{% elif response.status == 'declined' %}danger{% elif response.status == 'counter_offer' %}warning{% elif response.status == 'business_counter' %}info{% else %}secondary{% endif %}">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h6 class="mb-0">
+                                        {% if response.business %}
+                                            {{ response.status|replace('_', ' ')|title }} (Business)
+                                        {% else %}
+                                            {{ response.status|replace('_', ' ')|title }} (Influencer)
+                                        {% endif %}
+                                    </h6>
+                                    <small class="text-muted">{{ response.created_at.strftime('%b %d, %Y at %I:%M %p') }}</small>
+                                </div>
+                                {% if response.counter_offer %}
+                                    <p class="mb-2"><strong>Counter Offer:</strong> ₹{{ response.counter_offer }}</p>
+                                {% endif %}
+                                <p class="mb-1"><strong>Message:</strong></p>
+                                <p class="mb-0">{{ response.message }}</p>
+                            </div>
+                        {% endfor %}
+                        
+                        <!-- Business Response Button for Counter Offers -->
+                        {% if current_user.user_type == 'business' and latest_response and latest_response.status == 'counter_offer' %}
+                            <div class="text-center mt-4">
+                                <a href="{{ url_for('business_respond_to_counter', contact_id=contact.id) }}" class="btn btn-warning">
+                                    <i class="fas fa-reply me-2"></i>Respond to Counter Offer
+                                </a>
+                            </div>
+                        {% endif %}
+                        
+                        <!-- Influencer Response Button for Business Counter Offers -->
+                        {% if current_user.user_type == 'influencer' and latest_response and latest_response.status == 'business_counter' %}
+                            <div class="text-center mt-4">
+                                <a href="{{ url_for('respond_to_contact', contact_id=contact.id) }}" class="btn btn-info">
+                                    <i class="fas fa-reply me-2"></i>Respond to Business Counter Offer
+                                </a>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-clock fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No Response Yet</h5>
+                            <p class="text-muted">
+                                {% if current_user.user_type == 'influencer' %}
+                                    You haven't responded to this contact yet.
+                                    <a href="{{ url_for('respond_to_contact', contact_id=contact.id) }}" class="btn btn-primary mt-2">
+                                        <i class="fas fa-reply me-2"></i>Respond Now
+                                    </a>
+                                {% else %}
+                                    The influencer hasn't responded to this contact yet.
+                                {% endif %}
+                            </p>
+                        </div>
+                    {% endif %}
+
+                    <!-- Current Status -->
+                    <div class="mt-4">
+                        <h6><strong>Current Status:</strong></h6>
+                        <span class="badge bg-{% if contact.status == 'pending' %}warning{% elif contact.status == 'accepted' %}success{% elif contact.status == 'declined' %}danger{% elif contact.status == 'counter_offer' %}warning{% elif contact.status == 'business_counter' %}info{% else %}secondary{% endif %} fs-6">
+                            {{ contact.status|replace('_', ' ')|title }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
