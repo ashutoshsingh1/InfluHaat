@@ -6,71 +6,63 @@
 <div class="container" style="margin-top: 100px; margin-bottom: 100px;">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <div class="card">
+            <div class="card shadow-lg">
                 <div class="card-header">
                     <h4 class="mb-0">
                         <i class="fas fa-envelope me-2"></i>Contact {{ business.company_name }}
                     </h4>
                 </div>
                 <div class="card-body">
-                    <!-- Business Details -->
-                    <div class="alert alert-info">
-                        <h6><strong>Business Details</strong></h6>
-                        <p><strong>Company:</strong> {{ business.company_name }}</p>
-                        <p><strong>Industry:</strong> {{ business.business_type|replace('_', ' ')|title }}</p>
-                        <p><strong>Location:</strong> {{ business.location }}</p>
-                        <p><strong>Contact Person:</strong> {{ business.contact_person }}</p>
-                        {% if business.description %}
-                            <hr>
-                            <p><strong>About:</strong> {{ business.description }}</p>
-                        {% endif %}
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h6>Business Details:</h6>
+                            <ul class="list-unstyled">
+                                <li><strong>Company:</strong> {{ business.company_name }}</li>
+                                <li><strong>Industry:</strong> {{ business.business_type|title }}</li>
+                                <li><strong>Location:</strong> {{ business.location }}</li>
+                                <li><strong>Contact Person:</strong> {{ business.contact_person }}</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            {% if business.description %}
+                                <h6>About:</h6>
+                                <p class="text-muted">{{ business.description }}</p>
+                            {% endif %}
+                        </div>
                     </div>
-
-                    <!-- Contact Form -->
+                    
+                    <hr>
+                    
                     <form method="POST">
                         {{ form.hidden_tag() }}
                         
                         <div class="mb-3">
-                            {{ form.campaign_type.label(class="form-label") }}
-                            {{ form.campaign_type(class="form-select") }}
-                            {% if form.campaign_type.errors %}
-                                <div class="text-danger">
-                                    {% for error in form.campaign_type.errors %}
-                                        <small>{{ error }}</small>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                        </div>
-
-                        <div class="mb-3">
-                            {{ form.budget.label(class="form-label") }}
-                            {{ form.budget(class="form-control", placeholder="Enter your proposed rate or budget") }}
-                            {% if form.budget.errors %}
-                                <div class="text-danger">
-                                    {% for error in form.budget.errors %}
-                                        <small>{{ error }}</small>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                        </div>
-
-                        <div class="mb-3">
                             {{ form.message.label(class="form-label") }}
-                            {{ form.message(class="form-control", rows="6", placeholder="Introduce yourself and explain why you'd like to collaborate with this business. Include your relevant experience, audience demographics, and proposed collaboration ideas.") }}
+                            {{ form.message(class="form-control", rows="5", placeholder="Describe your services, rates, and why you'd be a great fit for this business...") }}
                             {% if form.message.errors %}
-                                <div class="text-danger">
-                                    {% for error in form.message.errors %}
-                                        <small>{{ error }}</small>
-                                    {% endfor %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.message.errors %}{{ error }}{% endfor %}
                                 </div>
                             {% endif %}
                         </div>
-
-                        <div class="d-flex justify-content-between">
-                            <a href="{{ url_for('business_profile', id=business.id) }}" class="btn btn-secondary">
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form.budget.label(class="form-label") }}
+                                {{ form.budget(class="form-control", placeholder="e.g., 500") }}
+                                <div class="form-text">Your rate for this type of collaboration</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form.campaign_type.label(class="form-label") }}
+                                {{ form.campaign_type(class="form-select") }}
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            {{ form.submit(class="btn btn-primary btn-lg") }}
+                            <a href="{{ url_for('business_profile', id=business.id) }}" class="btn btn-outline-secondary">
                                 <i class="fas fa-arrow-left me-2"></i>Back to Profile
                             </a>
-                            {{ form.submit(class="btn btn-primary") }}
                         </div>
                     </form>
                 </div>

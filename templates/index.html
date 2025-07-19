@@ -27,92 +27,73 @@
 </section>
 
 <!-- Search Section -->
-<section class="py-5" style="background-color: var(--bg-light);">
+<section class="py-5" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
     <div class="container">
-        <div class="row">
-            <div class="col-md-6">
-                <div class="search-form">
-                    <h3 class="text-center mb-4">Find the Perfect Influencer</h3>
-                    <form action="{{ url_for('search_influencers') }}" method="GET">
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label class="form-label">Location</label>
-                                <input type="text" class="form-control" name="location" placeholder="Enter city or region">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="card shadow-lg border-0">
+                    <div class="card-body p-5">
+                        <div class="text-center mb-4">
+                            <div class="mb-3">
+                                <i class="fas fa-search fa-3x" style="color: var(--primary-color);"></i>
                             </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Category</label>
-                                <select class="form-select" name="category">
-                                    <option value="">All Categories</option>
-                                    <option value="technology">Technology</option>
-                                    <option value="fashion">Fashion & Beauty</option>
-                                    <option value="food">Food & Beverage</option>
-                                    <option value="fitness">Health & Fitness</option>
-                                    <option value="travel">Travel & Tourism</option>
-                                    <option value="lifestyle">Lifestyle</option>
-                                    <option value="gaming">Gaming</option>
-                                    <option value="education">Education</option>
-                                    <option value="entertainment">Entertainment</option>
-                                    <option value="business">Business</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Min Followers</label>
-                                <input type="number" class="form-control" name="min_followers" placeholder="1000">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Max Budget (₹)</label>
-                                <input type="number" class="form-control" name="max_budget" placeholder="500">
-                            </div>
-                            <div class="col-12">
-                                <button type="submit" class="btn btn-primary w-100">
-                                    <i class="fas fa-search me-2"></i>Search Influencers
-                                </button>
-                            </div>
+                            <h2 class="fw-bold mb-2">Find the Perfect Influencer</h2>
+                            <p class="text-muted">Discover influencers that match your business needs and budget</p>
                         </div>
-                    </form>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="search-form">
-                    <h3 class="text-center mb-4">Find the Perfect Influencer</h3>
-                    <form action="{{ url_for('search_influencers') }}" method="GET">
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label class="form-label">Location</label>
-                                <input type="text" class="form-control" name="location" placeholder="Enter city or region">
+                        
+                        <form action="{{ url_for('search_influencers') }}" method="GET">
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">
+                                        <i class="fas fa-map-marker-alt me-2 text-primary"></i>Location
+                                    </label>
+                                    <input type="text" class="form-control form-control-lg" name="location" placeholder="Enter city or region">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">
+                                        <i class="fas fa-tags me-2 text-primary"></i>Category
+                                    </label>
+                                    <select class="form-select form-select-lg" name="category">
+                                        <option value="">All Categories</option>
+                                        <option value="technology">Technology</option>
+                                        <option value="fashion">Fashion & Beauty</option>
+                                        <option value="food">Food & Beverage</option>
+                                        <option value="fitness">Health & Fitness</option>
+                                        <option value="travel">Travel & Tourism</option>
+                                        <option value="lifestyle">Lifestyle</option>
+                                        <option value="gaming">Gaming</option>
+                                        <option value="education">Education</option>
+                                        <option value="entertainment">Entertainment</option>
+                                        <option value="business">Business</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">
+                                        <i class="fas fa-users me-2 text-primary"></i>Min Followers
+                                    </label>
+                                    <input type="number" class="form-control form-control-lg" name="min_followers" placeholder="1000">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">
+                                        <i class="fas fa-rupee-sign me-2 text-primary"></i>Max Budget (₹)
+                                    </label>
+                                    <input type="number" class="form-control form-control-lg" name="max_budget" placeholder="500">
+                                </div>
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-primary btn-lg w-100 py-3">
+                                        <i class="fas fa-search me-3"></i>Search Influencers
+                                    </button>
+                                </div>
                             </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Category</label>
-                                <select class="form-select" name="category">
-                                    <option value="">All Categories</option>
-                                    <option value="technology">Technology</option>
-                                    <option value="fashion">Fashion & Beauty</option>
-                                    <option value="food">Food & Beverage</option>
-                                    <option value="fitness">Health & Fitness</option>
-                                    <option value="travel">Travel & Tourism</option>
-                                    <option value="lifestyle">Lifestyle</option>
-                                    <option value="gaming">Gaming</option>
-                                    <option value="education">Education</option>
-                                    <option value="entertainment">Entertainment</option>
-                                    <option value="business">Business</option>
-                                    <option value="other">Other</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Min Followers</label>
-                                <input type="number" class="form-control" name="min_followers" placeholder="1000">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Max Budget ($)</label>
-                                <input type="number" class="form-control" name="max_budget" placeholder="500">
-                            </div>
-                            <div class="col-12">
-                                <button type="submit" class="btn btn-success w-100">
-                                    <i class="fas fa-search me-2"></i>Search Influencers
-                                </button>
-                            </div>
+                        </form>
+                        
+                        <div class="text-center mt-4">
+                            <small class="text-muted">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Advanced filters available on search results page
+                            </small>
                         </div>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>

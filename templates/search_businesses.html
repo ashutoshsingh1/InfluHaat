@@ -4,123 +4,135 @@
 
 {% block content %}
 <div class="container" style="margin-top: 100px; margin-bottom: 100px;">
-    <!-- Search Form -->
-    <div class="search-form">
-        <h3 class="text-center mb-4">Find Businesses</h3>
-        <form method="GET" action="{{ url_for('search_businesses') }}">
-            <div class="row">
-                <div class="col-md-3">
-                    <div class="mb-3">
-                        <label for="location" class="form-label">Location</label>
-                        <input type="text" class="form-control" id="location" name="location" 
-                               value="{{ location }}" placeholder="e.g., New York, London">
-                    </div>
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-filter me-2"></i>Filter Results</h5>
                 </div>
-                <div class="col-md-3">
-                    <div class="mb-3">
-                        <label for="business_type" class="form-label">Business Type</label>
-                        <select class="form-select" id="business_type" name="business_type">
-                            <option value="">All Types</option>
-                            <option value="technology" {% if business_type == 'technology' %}selected{% endif %}>Technology</option>
-                            <option value="fashion" {% if business_type == 'fashion' %}selected{% endif %}>Fashion & Beauty</option>
-                            <option value="food" {% if business_type == 'food' %}selected{% endif %}>Food & Beverage</option>
-                            <option value="fitness" {% if business_type == 'fitness' %}selected{% endif %}>Health & Fitness</option>
-                            <option value="travel" {% if business_type == 'travel' %}selected{% endif %}>Travel & Tourism</option>
-                            <option value="finance" {% if business_type == 'finance' %}selected{% endif %}>Finance</option>
-                            <option value="education" {% if business_type == 'education' %}selected{% endif %}>Education</option>
-                            <option value="entertainment" {% if business_type == 'entertainment' %}selected{% endif %}>Entertainment</option>
-                            <option value="automotive" {% if business_type == 'automotive' %}selected{% endif %}>Automotive</option>
-                            <option value="real_estate" {% if business_type == 'real_estate' %}selected{% endif %}>Real Estate</option>
-                            <option value="other" {% if business_type == 'other' %}selected{% endif %}>Other</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="mb-3">
-                        <label for="min_budget" class="form-label">Min Budget (₹)</label>
-                        <input type="number" class="form-control" id="min_budget" name="min_budget" 
-                               value="{{ min_budget }}" placeholder="0">
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="mb-3">
-                        <label for="max_budget" class="form-label">Max Budget (₹)</label>
-                        <input type="number" class="form-control" id="max_budget" name="max_budget" 
-                               value="{{ max_budget }}" placeholder="10000">
-                    </div>
+                <div class="card-body">
+                    <form method="GET">
+                        <div class="mb-3">
+                            <label class="form-label">Location</label>
+                            <input type="text" class="form-control" name="location" value="{{ location }}" placeholder="Enter location">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Business Type</label>
+                            <select class="form-select" name="business_type">
+                                <option value="">All Business Types</option>
+                                <option value="technology" {% if business_type == 'technology' %}selected{% endif %}>Technology</option>
+                                <option value="fashion" {% if business_type == 'fashion' %}selected{% endif %}>Fashion & Beauty</option>
+                                <option value="food" {% if business_type == 'food' %}selected{% endif %}>Food & Beverage</option>
+                                <option value="fitness" {% if business_type == 'fitness' %}selected{% endif %}>Health & Fitness</option>
+                                <option value="travel" {% if business_type == 'travel' %}selected{% endif %}>Travel & Tourism</option>
+                                <option value="finance" {% if business_type == 'finance' %}selected{% endif %}>Finance</option>
+                                <option value="education" {% if business_type == 'education' %}selected{% endif %}>Education</option>
+                                <option value="entertainment" {% if business_type == 'entertainment' %}selected{% endif %}>Entertainment</option>
+                                <option value="automotive" {% if business_type == 'automotive' %}selected{% endif %}>Automotive</option>
+                                <option value="real_estate" {% if business_type == 'real_estate' %}selected{% endif %}>Real Estate</option>
+                                <option value="other" {% if business_type == 'other' %}selected{% endif %}>Other</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Min Budget ($)</label>
+                            <input type="number" class="form-control" name="min_budget" value="{{ min_budget }}" placeholder="100">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Max Budget ($)</label>
+                            <input type="number" class="form-control" name="max_budget" value="{{ max_budget }}" placeholder="5000">
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-search me-2"></i>Update Search
+                        </button>
+                    </form>
                 </div>
             </div>
-            <div class="text-center">
-                <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-search me-2"></i>Search Businesses
-                </button>
-                <a href="{{ url_for('search_businesses') }}" class="btn btn-outline-secondary ms-2">
-                    <i class="fas fa-times me-2"></i>Clear
-                </a>
-            </div>
-        </form>
-    </div>
-
-    <!-- Search Results -->
-    <div class="mt-5">
-        <h4 class="mb-4">Business Results ({{ businesses|length }} found)</h4>
+        </div>
         
-        {% if businesses %}
-            <div class="row">
-                {% for business in businesses %}
-                    <div class="col-md-6 col-lg-4 mb-4">
-                        <div class="card h-100">
-                            <div class="card-body">
-                                <div class="d-flex align-items-center mb-3">
-                                    <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
-                                        <i class="fas fa-building fa-lg"></i>
-                                    </div>
-                                    <div>
-                                        <h5 class="card-title mb-1">{{ business.company_name }}</h5>
-                                        <p class="text-muted mb-0">
-                                            <i class="fas fa-map-marker-alt me-1"></i>{{ business.location }}
-                                        </p>
-                                    </div>
-                                </div>
-                                
-                                <span class="badge bg-secondary mb-2">{{ business.business_type|replace('_', ' ')|title }}</span>
-                                
-                                {% if business.description %}
-                                    <p class="card-text text-muted">{{ business.description[:100] }}{% if business.description|length > 100 %}...{% endif %}</p>
-                                {% endif %}
-                                
-                                <div class="mb-3">
-                                    <small class="text-muted">
-                                        <i class="fas fa-user me-1"></i>Contact: {{ business.contact_person }}
-                                    </small>
-                                </div>
-                                
-                                {% if business.website %}
+        <div class="col-md-9">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Business Search Results</h2>
+                <span class="badge bg-primary">{{ businesses|length }} business(es) found</span>
+            </div>
+            
+            {% if businesses %}
+                <div class="row g-4">
+                    {% for business in businesses %}
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
                                     <div class="mb-3">
-                                        <small class="text-muted">
-                                            <i class="fas fa-globe me-1"></i>
-                                            <a href="{{ business.website }}" target="_blank" class="text-decoration-none">{{ business.website }}</a>
-                                        </small>
+                                        <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                            <i class="fas fa-building fa-2x"></i>
+                                        </div>
                                     </div>
-                                {% endif %}
-                                
-                                <div class="d-grid">
-                                    <a href="{{ url_for('business_profile', id=business.id) }}" class="btn btn-outline-primary">
-                                        <i class="fas fa-eye me-2"></i>View Profile
-                                    </a>
+                                    
+                                    <h5 class="card-title">{{ business.company_name }}</h5>
+                                    <p class="text-muted mb-2">
+                                        <i class="fas fa-map-marker-alt me-1"></i>{{ business.location }}
+                                    </p>
+                                    
+                                    <div class="mb-3">
+                                        <span class="badge bg-secondary">{{ business.business_type|title }}</span>
+                                    </div>
+                                    
+                                    {% if business.description %}
+                                        <p class="card-text small text-muted">{{ business.description[:100] }}{% if business.description|length > 100 %}...{% endif %}</p>
+                                    {% endif %}
+                                    
+                                    <div class="mb-3">
+                                        <small class="text-muted">Contact Person:</small>
+                                        <div class="fw-bold">{{ business.contact_person }}</div>
+                                    </div>
+                                    
+                                    {% if business.phone %}
+                                        <div class="mb-3">
+                                            <small class="text-muted">Phone:</small>
+                                            <div class="small">{{ business.phone }}</div>
+                                        </div>
+                                    {% endif %}
+                                    
+                                    {% if business.website %}
+                                        <div class="mb-3">
+                                            <small class="text-muted">Website:</small>
+                                            <div class="small">
+                                                <a href="{{ business.website }}" target="_blank" class="text-decoration-none">{{ business.website }}</a>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                    
+                                    <div class="d-grid gap-2">
+                                        <a href="{{ url_for('business_profile', id=business.id) }}" class="btn btn-outline-primary btn-sm">
+                                            <i class="fas fa-eye me-1"></i>View Profile
+                                        </a>
+                                        {% if current_user.is_authenticated and current_user.user_type == 'influencer' %}
+                                            <a href="{{ url_for('contact_business', business_id=business.id) }}" class="btn btn-primary btn-sm">
+                                                <i class="fas fa-envelope me-1"></i>Contact
+                                            </a>
+                                        {% endif %}
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <div class="mb-4">
+                        <i class="fas fa-building fa-4x text-muted"></i>
                     </div>
-                {% endfor %}
-            </div>
-        {% else %}
-            <div class="text-center py-5">
-                <i class="fas fa-search fa-3x text-muted mb-3"></i>
-                <h5 class="text-muted">No businesses found</h5>
-                <p class="text-muted">Try adjusting your search criteria to find more businesses.</p>
-            </div>
-        {% endif %}
+                    <h3 class="text-muted">No Businesses Found</h3>
+                    <p class="text-muted">Try adjusting your search criteria or check back later for new businesses.</p>
+                    <a href="{{ url_for('search_businesses') }}" class="btn btn-primary">
+                        <i class="fas fa-redo me-2"></i>Clear Filters
+                    </a>
+                </div>
+            {% endif %}
+        </div>
     </div>
 </div>
 {% endblock %} 
