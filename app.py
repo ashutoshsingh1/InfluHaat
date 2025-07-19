@@ -9,9 +9,15 @@ from datetime import datetime
 import os
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'your-secret-key-change-in-production'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///influencer_marketplace.db'
+
+# Configuration for PythonAnywhere
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your-secret-key-change-in-production')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///infu_haat.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# For PythonAnywhere, use absolute path for database
+if 'PYTHONANYWHERE_SITE' in os.environ:
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////home/yourusername/infu_haat/infu_haat.db'
 
 db = SQLAlchemy(app)
 login_manager = LoginManager()
@@ -361,6 +367,38 @@ def search_influencers():
                          location=location, category=category, 
                          min_followers=min_followers, max_budget=max_budget)
 
+@app.route('/search-businesses')
+def search_businesses():
+    location = request.args.get('location', '')
+    business_type = request.args.get('business_type', '')
+    min_budget = request.args.get('min_budget', '')
+    max_budget = request.args.get('max_budget', '')
+    
+    query = Business.query
+    
+    if location:
+        query = query.filter(Business.location.ilike(f'%{location}%'))
+    if business_type:
+        query = query.filter(Business.business_type.ilike(f'%{business_type}%'))
+    if min_budget:
+        try:
+            # This would need to be implemented based on actual budget data
+            # For now, we'll just filter by business type
+            pass
+        except:
+            pass
+    if max_budget:
+        try:
+            # This would need to be implemented based on actual budget data
+            # For now, we'll just filter by business type
+            pass
+        except:
+            pass
+    
+    businesses = query.all()
+    return render_template('search_businesses.html', businesses=businesses, 
+                         location=location, business_type=business_type, 
+                         min_budget=min_budget, max_budget=max_budget)
 
 
 @app.route('/influencer/<int:id>')
@@ -463,6 +501,35 @@ def contact_influencer(influencer_id):
 @app.route('/contact-business/<int:business_id>', methods=['GET', 'POST'])
 @login_required
 def contact_business(business_id):
+    if current_user.user_type != 'influencer':
+        flash('Only influencers can contact businesses')
+        return redirect(url_for('index'))
+    
+    influencer = Influencer.query.filter_by(user_id=current_user.id).first()
+    business = Business.query.get_or_404(business_id)
+    form = ContactForm()
+    
+    if form.validate_on_submit():
+        budget = 0.0
+        try:
+            budget = float(form.budget.data) if form.budget.data else 0.0
+        except:
+            budget = 0.0
+        
+        contact = Contact(
+            business_id=business_id,
+            influencer_id=influencer.id,
+            message=form.message.data,
+            budget=budget,
+            campaign_type=form.campaign_type.data
+        )
+        db.session.add(contact)
+        db.session.commit()
+        
+        flash('Message sent successfully!')
+        return redirect(url_for('influencer_dashboard'))
+    
+    return render_template('contact_business_form.html', form=form, business=business)
     if current_user.user_type != 'influencer':
         flash('Only influencers can contact businesses')
         return redirect(url_for('index'))
@@ -749,4 +816,4 @@ def view_business_reviews(business_id):
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
-    app.run(debug=True) 
+    app.run(debug=True, host='0.0.0.0', port=5000) 
