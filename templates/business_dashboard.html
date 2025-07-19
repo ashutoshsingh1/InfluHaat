@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block title %}Business Dashboard - InfluHaat{% endblock %}
+
+{% block content %}
+<div class="container" style="margin-top: 100px; margin-bottom: 100px;">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="profile-card">
+                <div class="mb-4">
+                    <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                        <i class="fas fa-building fa-3x"></i>
+                    </div>
+                </div>
+                
+                <h4>{{ business.company_name }}</h4>
+                <p class="text-muted mb-3">
+                    <i class="fas fa-map-marker-alt me-2"></i>{{ business.location }}
+                </p>
+                
+                <span class="badge bg-secondary mb-3">{{ business.business_type|title }}</span>
+                
+                <div class="text-start">
+                    <p><strong>Contact:</strong> {{ business.contact_person }}</p>
+                    {% if business.phone %}
+                        <p><strong>Phone:</strong> {{ business.phone }}</p>
+                    {% endif %}
+                    {% if business.website %}
+                        <p><strong>Website:</strong> <a href="{{ business.website }}" target="_blank">{{ business.website }}</a></p>
+                    {% endif %}
+                    {% if business.description %}
+                        <p><strong>About:</strong> {{ business.description }}</p>
+                    {% endif %}
+                </div>
+                
+                <hr class="my-4">
+                
+                <a href="{{ url_for('search_influencers') }}" class="btn btn-primary w-100">
+                    <i class="fas fa-search me-2"></i>Find Influencers
+                </a>
+            </div>
+        </div>
+        
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-envelope me-2"></i>Contact History</h5>
+                    <span class="badge bg-primary">{{ contacts|length }} contact(s)</span>
+                </div>
+                <div class="card-body">
+                    {% if contacts %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Influencer</th>
+                                        <th>Category</th>
+                                        <th>Message</th>
+                                        <th>Budget</th>
+                                        <th>Status</th>
+                                        <th>Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for contact in contacts %}
+                                        <tr>
+                                            <td>
+                                                <a href="{{ url_for('influencer_profile', id=contact.influencer.id) }}" class="text-decoration-none">
+                                                    {{ contact.influencer.name }}
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-secondary">{{ contact.influencer.categories|title }}</span>
+                                            </td>
+                                            <td>
+                                                <small class="text-muted">{{ contact.message[:50] }}{% if contact.message|length > 50 %}...{% endif %}</small>
+                                            </td>
+                                            <td>
+                                                {% if contact.budget %}
+                                                    ₹{{ contact.budget }}
+                                                {% else %}
+                                                    <span class="text-muted">-</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-{% if contact.status == 'pending' %}warning{% elif contact.status == 'accepted' %}success{% elif contact.status == 'declined' %}danger{% elif contact.status == 'counter_offer' %}warning{% elif contact.status == 'business_counter' %}info{% else %}secondary{% endif %}">
+                                                    {{ contact.status|replace('_', ' ')|title }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <small class="text-muted">{{ contact.created_at.strftime('%b %d, %Y') }}</small>
+                                            </td>
+                                            <td>
+                                                <a href="{{ url_for('view_response', contact_id=contact.id) }}" class="btn btn-sm btn-outline-primary">
+                                                    <i class="fas fa-eye me-1"></i>View Details
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        
+
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-envelope fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No contacts yet</h5>
+                            <p class="text-muted">Start by finding and contacting influencers for your campaigns.</p>
+                            <a href="{{ url_for('search_influencers') }}" class="btn btn-primary">
+                                <i class="fas fa-search me-2"></i>Find Influencers
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
