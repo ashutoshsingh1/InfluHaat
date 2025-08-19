@@ -213,7 +213,30 @@ class ReviewForm(FlaskForm):
 # Routes
 @app.route('/')
 def index():
-    return render_template('index.html')
+    # Compute top influencers by activity for the homepage leaderboard
+    def get_top_influencers(limit=5):
+        influencers = Influencer.query.all()
+        scores = []
+        for inf in influencers:
+            try:
+                contacts_count = Contact.query.filter_by(influencer_id=inf.id).count()
+                responses_count = ContactResponse.query.filter_by(influencer_id=inf.id).count()
+                reviews_count = Review.query.filter_by(reviewed_influencer_id=inf.id).count()
+            except Exception:
+                contacts_count = responses_count = reviews_count = 0
+
+            followers = inf.followers_count or 0
+            engagement = inf.engagement_rate or 0.0
+
+            # Activity score: weighted sum (followers*engagement) + interactions
+            score = (followers * engagement) + ((contacts_count + responses_count + reviews_count) * 200)
+            scores.append((score, inf))
+
+        scores.sort(key=lambda x: x[0], reverse=True)
+        return [inf for (_s, inf) in scores[:limit]]
+
+    top_influencers = get_top_influencers(5)
+    return render_template('index.html', top_influencers=top_influencers)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -353,14 +376,26 @@ def search_influencers():
         query = query.filter(Influencer.categories.ilike(f'%{category}%'))
     if min_followers:
         try:
-            query = query.filter(Influencer.followers_count >= int(min_followers))
-        except:
-            pass
+            mf = int(min_followers)
+            if mf > 0:
+                query = query.filter(Influencer.followers_count >= mf)
+            else:
+                flash('Minimum followers must be a positive number')
+                min_followers = ''
+        except ValueError:
+            flash('Invalid minimum followers value')
+            min_followers = ''
     if max_budget:
         try:
-            query = query.filter(Influencer.rate_per_post <= float(max_budget))
-        except:
-            pass
+            mb = float(max_budget)
+            if mb > 0:
+                query = query.filter(Influencer.rate_per_post <= mb)
+            else:
+                flash('Maximum budget must be a positive number')
+                max_budget = ''
+        except ValueError:
+            flash('Invalid maximum budget value')
+            max_budget = ''
     
     influencers = query.all()
     return render_template('search_results.html', influencers=influencers, 
@@ -380,20 +415,25 @@ def search_businesses():
         query = query.filter(Business.location.ilike(f'%{location}%'))
     if business_type:
         query = query.filter(Business.business_type.ilike(f'%{business_type}%'))
+    # Validate numeric inputs to ensure positive numbers
     if min_budget:
         try:
-            # This would need to be implemented based on actual budget data
-            # For now, we'll just filter by business type
-            pass
-        except:
-            pass
+            mb = float(min_budget)
+            if mb <= 0:
+                flash('Minimum budget must be a positive number')
+                min_budget = ''
+        except ValueError:
+            flash('Invalid minimum budget value')
+            min_budget = ''
     if max_budget:
         try:
-            # This would need to be implemented based on actual budget data
-            # For now, we'll just filter by business type
-            pass
-        except:
-            pass
+            mb = float(max_budget)
+            if mb <= 0:
+                flash('Maximum budget must be a positive number')
+                max_budget = ''
+        except ValueError:
+            flash('Invalid maximum budget value')
+            max_budget = ''
     
     businesses = query.all()
     return render_template('search_businesses.html', businesses=businesses, 
@@ -497,6 +537,16 @@ def contact_influencer(influencer_id):
         return redirect(url_for('business_dashboard'))
     
     return render_template('contact_form.html', form=form, influencer=influencer)
+
+
+# Ensure database tables exist (development convenience)
+# Run a safe create_all when the module is imported so the app can start
+try:
+    with app.app_context():
+        db.create_all()
+except Exception as e:
+    # Log a warning; in production you'd use a proper migration strategy
+    print('Warning: failed to create tables automatically:', e)
 
 @app.route('/contact-business/<int:business_id>', methods=['GET', 'POST'])
 @login_required

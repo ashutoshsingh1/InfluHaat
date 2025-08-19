@@ -343,5 +343,64 @@
             });
         });
     </script>
+    
+    <!-- Positive number validation for filter inputs -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Validate number fields with data-field attribute on submit
+            function validatePositiveNumbers(form) {
+                let valid = true;
+                const numFields = form.querySelectorAll('input[type=number][data-field]');
+                numFields.forEach(function(input) {
+                    const val = input.value;
+                    const errEl = form.querySelector('[data-error-for="' + input.getAttribute('data-field') + '"]');
+                    if (val !== '' && val !== null) {
+                        // Try parse as float
+                        const num = Number(val);
+                        if (!isFinite(num) || num <= 0) {
+                            valid = false;
+                            input.classList.add('is-invalid');
+                            if (errEl) errEl.classList.remove('d-none');
+                        } else {
+                            input.classList.remove('is-invalid');
+                            if (errEl) errEl.classList.add('d-none');
+                        }
+                    } else {
+                        input.classList.remove('is-invalid');
+                        if (errEl) errEl.classList.add('d-none');
+                    }
+                });
+                return valid;
+            }
+
+            // Attach submit handlers to forms that contain these inputs
+            const forms = document.querySelectorAll('form');
+            forms.forEach(function(form) {
+                if (form.querySelector('input[type=number][data-field]')) {
+                    form.addEventListener('submit', function(e) {
+                        if (!validatePositiveNumbers(form)) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                        }
+                    });
+
+                    // Prevent negative typing and normalize on input
+                    form.querySelectorAll('input[type=number][data-field]').forEach(function(input) {
+                        input.addEventListener('input', function() {
+                            if (this.value && Number(this.value) < 0) {
+                                this.value = this.value.replace('-', '');
+                            }
+                            // remove invalid state as user types
+                            if (this.value && Number(this.value) > 0) {
+                                this.classList.remove('is-invalid');
+                                const errEl = form.querySelector('[data-error-for="' + this.getAttribute('data-field') + '"]');
+                                if (errEl) errEl.classList.add('d-none');
+                            }
+                        });
+                    });
+                }
+            });
+        });
+    </script>
 </body>
 </html> 

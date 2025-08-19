@@ -37,12 +37,14 @@
                         
                         <div class="mb-3">
                             <label class="form-label">Min Budget ($)</label>
-                            <input type="number" class="form-control" name="min_budget" value="{{ min_budget }}" placeholder="100">
+                            <input type="number" class="form-control" name="min_budget" value="{{ min_budget }}" placeholder="100" min="0.01" step="0.01" data-field="min_budget">
+                            <div class="invalid-feedback d-none" data-error-for="min_budget">Please enter a positive number</div>
                         </div>
                         
                         <div class="mb-3">
                             <label class="form-label">Max Budget ($)</label>
-                            <input type="number" class="form-control" name="max_budget" value="{{ max_budget }}" placeholder="5000">
+                            <input type="number" class="form-control" name="max_budget" value="{{ max_budget }}" placeholder="5000" min="0.01" step="0.01" data-field="max_budget">
+                            <div class="invalid-feedback d-none" data-error-for="max_budget">Please enter a positive number</div>
                         </div>
                         
                         <button type="submit" class="btn btn-primary w-100">
@@ -77,7 +79,9 @@
                                     </p>
                                     
                                     <div class="mb-3">
-                                        <span class="badge bg-secondary">{{ business.business_type|title }}</span>
+                                        <a href="{{ url_for('search_influencers', category=business.business_type) }}" class="text-decoration-none">
+                                            <span class="badge bg-secondary">{{ business.business_type|title }}</span>
+                                        </a>
                                     </div>
                                     
                                     {% if business.description %}

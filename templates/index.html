@@ -71,13 +71,15 @@
                                     <label class="form-label fw-semibold">
                                         <i class="fas fa-users me-2 text-primary"></i>Min Followers
                                     </label>
-                                    <input type="number" class="form-control form-control-lg" name="min_followers" placeholder="1000">
+                                    <input type="number" class="form-control form-control-lg" name="min_followers" placeholder="1000" min="1" step="1" data-field="min_followers">
+                                    <div class="invalid-feedback d-none" data-error-for="min_followers">Please enter a positive integer</div>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label fw-semibold">
                                         <i class="fas fa-rupee-sign me-2 text-primary"></i>Max Budget (₹)
                                     </label>
-                                    <input type="number" class="form-control form-control-lg" name="max_budget" placeholder="500">
+                                    <input type="number" class="form-control form-control-lg" name="max_budget" placeholder="500" min="0.01" step="0.01" data-field="max_budget">
+                                    <div class="invalid-feedback d-none" data-error-for="max_budget">Please enter a positive number</div>
                                 </div>
                                 <div class="col-12">
                                     <button type="submit" class="btn btn-primary btn-lg w-100 py-3">
@@ -142,46 +144,88 @@
     </div>
 </section>
 
+<!-- Leaderboard Section -->
+<section class="py-5" style="background-color: #fff;">
+    <div class="container">
+        <h2 class="section-title text-center">Top Influencers</h2>
+        <div class="row g-4 justify-content-center">
+            {% if top_influencers %}
+                {% for influencer in top_influencers %}
+                    <div class="col-md-3">
+                        <div class="card text-center h-100">
+                            <div class="card-body">
+                                <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center mb-3" style="width: 70px; height: 70px;">
+                                    <i class="fas fa-user fa-2x"></i>
+                                </div>
+                                <h5 class="card-title mb-1">{{ influencer.name }}</h5>
+                                <p class="small text-muted mb-1">{{ influencer.location }}</p>
+                                <p class="small text-muted">Followers: {{ influencer.followers_count }}</p>
+                                <a href="{{ url_for('influencer_profile', id=influencer.id) }}" class="btn btn-outline-primary btn-sm">View Profile</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-12 text-center">
+                    <p class="text-muted">No top influencers yet. Seed data to populate leaderboard.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
 <!-- Business Categories Section -->
 <section class="py-5" style="background-color: var(--bg-light);">
     <div class="container">
         <h2 class="section-title text-center">Business Categories We Serve</h2>
         <div class="row g-3">
             <div class="col-md-2 col-sm-4 col-6">
-                <div class="card text-center p-3">
-                    <i class="fas fa-laptop-code fa-2x mb-2" style="color: var(--primary-color);"></i>
-                    <small class="fw-bold">Technology</small>
-                </div>
+                <a href="{{ url_for('search_influencers', category='technology') }}" class="text-decoration-none text-reset">
+                    <div class="card text-center p-3">
+                        <i class="fas fa-laptop-code fa-2x mb-2" style="color: var(--primary-color);"></i>
+                        <small class="fw-bold">Technology</small>
+                    </div>
+                </a>
             </div>
             <div class="col-md-2 col-sm-4 col-6">
-                <div class="card text-center p-3">
-                    <i class="fas fa-tshirt fa-2x mb-2" style="color: var(--secondary-color);"></i>
-                    <small class="fw-bold">Fashion</small>
-                </div>
+                <a href="{{ url_for('search_influencers', category='fashion') }}" class="text-decoration-none text-reset">
+                    <div class="card text-center p-3">
+                        <i class="fas fa-tshirt fa-2x mb-2" style="color: var(--secondary-color);"></i>
+                        <small class="fw-bold">Fashion</small>
+                    </div>
+                </a>
             </div>
             <div class="col-md-2 col-sm-4 col-6">
-                <div class="card text-center p-3">
-                    <i class="fas fa-utensils fa-2x mb-2" style="color: var(--accent-color);"></i>
-                    <small class="fw-bold">Food & Beverage</small>
-                </div>
+                <a href="{{ url_for('search_influencers', category='food') }}" class="text-decoration-none text-reset">
+                    <div class="card text-center p-3">
+                        <i class="fas fa-utensils fa-2x mb-2" style="color: var(--accent-color);"></i>
+                        <small class="fw-bold">Food & Beverage</small>
+                    </div>
+                </a>
             </div>
             <div class="col-md-2 col-sm-4 col-6">
-                <div class="card text-center p-3">
-                    <i class="fas fa-dumbbell fa-2x mb-2" style="color: var(--primary-color);"></i>
-                    <small class="fw-bold">Fitness</small>
-                </div>
+                <a href="{{ url_for('search_influencers', category='fitness') }}" class="text-decoration-none text-reset">
+                    <div class="card text-center p-3">
+                        <i class="fas fa-dumbbell fa-2x mb-2" style="color: var(--primary-color);"></i>
+                        <small class="fw-bold">Fitness</small>
+                    </div>
+                </a>
             </div>
             <div class="col-md-2 col-sm-4 col-6">
-                <div class="card text-center p-3">
-                    <i class="fas fa-plane fa-2x mb-2" style="color: var(--secondary-color);"></i>
-                    <small class="fw-bold">Travel</small>
-                </div>
+                <a href="{{ url_for('search_influencers', category='travel') }}" class="text-decoration-none text-reset">
+                    <div class="card text-center p-3">
+                        <i class="fas fa-plane fa-2x mb-2" style="color: var(--secondary-color);"></i>
+                        <small class="fw-bold">Travel</small>
+                    </div>
+                </a>
             </div>
             <div class="col-md-2 col-sm-4 col-6">
-                <div class="card text-center p-3">
-                    <i class="fas fa-dollar-sign fa-2x mb-2" style="color: var(--accent-color);"></i>
-                    <small class="fw-bold">Finance</small>
-                </div>
+                <a href="{{ url_for('search_influencers', category='finance') }}" class="text-decoration-none text-reset">
+                    <div class="card text-center p-3">
+                        <i class="fas fa-dollar-sign fa-2x mb-2" style="color: var(--accent-color);"></i>
+                        <small class="fw-bold">Finance</small>
+                    </div>
+                </a>
             </div>
         </div>
     </div>
